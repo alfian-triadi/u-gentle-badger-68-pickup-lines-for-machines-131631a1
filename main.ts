@@ -16,6 +16,14 @@ if (length < 1 || length > 200) {
 if (ENTRY.trim().length === 0) {
   throw new Error("entry must not be only whitespace");
 }
+// Gate: exactly one line, no control characters (no newlines, tabs, or
+// other invisible control chars inside the text).
+if (/[\r\n]/.test(ENTRY)) {
+  throw new Error("entry must be exactly one line (no newline characters)");
+}
+if (/[\u0000-\u001F\u007F]/.test(ENTRY)) {
+  throw new Error("entry must not contain control characters");
+}
 
 const outDir: string = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
 mkdirSync(outDir, { recursive: true });
